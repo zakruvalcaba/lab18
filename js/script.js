@@ -17,13 +17,13 @@ function add(employees) {
 }
 
 function del(employees) {
-    let num = parseInt(prompt('Enter the employee\'s number to delete'));
-    if (!num < 1 || !num < employees.length) {
+    let num = parseInt(prompt('Enter employee number to delete'));
+    if (num < 1 || num > employees.length) {
+        alert('Invalid employee number.');
+    } else {
         let employee = employees.splice(num - 1, 1);
         console.log(`${employee} was successfully deleted.`);
         console.log('');
-    } else {
-        alert('Invalid employee number');
     }
 }
 
