@@ -1,76 +1,78 @@
-function view(employees) {
-    let i = 1; // COUNTER THAT APPEARS BEFORE EMPLOYEE NAME
-    // LOOP THROUGH EMPLOYEE ARRAY
-    for (let employee of employees) {
-        console.log(`${i}. ${employee}`);
-        i++; // INCREMENT COUNTER
+function view(arrEmployees) {
+    // COUNTER THAT APPEARS NEXT TO EMPLOYEES NAME (START AT 1)
+    let i = 1
+    // LOOP THROUGH EMPLOYEES ARRAY
+    for (let employee of arrEmployees) {
+        console.log(`${i}. ${employee}`)
+        i++ // INCREMENT COUNTER
     }
-    console.log('');
+    console.log('')
 }
-
-function add(employees) {
-    let name = prompt('Enter the employee\'s name');
-    let title = prompt('Enter the employee\'s title');
-    employees.push(`${name} (${title})`);
-    console.log(`${name} was successfully added.`);
-    console.log('');
+function add(arrEmployees) {
+    // COLLECT THE EMPLOYEE'S NAME AND TITLE
+    let name = prompt('Enter the employee\'s name')
+    let title = prompt('Enter the employee\'s title')
+    // PUSH NEW EMPLOYEE TO TEMP ARRAY
+    arrEmployees.push(`${name} (${title})`)
+    // DISPLAY SUCCESS MESSAGE
+    console.log(`${name} was successfully added.`)
+    console.log('')
 }
-
-function del(employees) {
-    let num = parseInt(prompt('Enter employee number to delete'));
-    if (num < 1 || num > employees.length) {
-        alert('Invalid employee number.');
+function del(arrEmployees) {
+    // ASK USER WHICH EMPLOYEE THEY WANT TO DELETE
+    let num = parseInt(prompt('Enter employee number to delete'))
+    // CHECK AND MAKE SURE ENTRY IS A VALID NUMBER
+    if (num < 1 || num > arrEmployees.length) {
+        alert('Invalid employee number.')
     } else {
-        let employee = employees.splice(num - 1, 1);
-        console.log(`${employee} was successfully deleted.`);
-        console.log('');
+        let employee = arrEmployees.splice(num - 1, 1)
+        console.log(`${employee} was successfully deleted.`)
+        console.log('')
     }
 }
-
-function main() {
-    // DISPLAY THE COMMAND MENU
-    console.log('The Employee Management Appplication');
-    console.log('------------------------------------');
-    console.log('COMMAND MENU');
-    console.log('show - Show all employees');
-    console.log('add  - Add an employee');
-    console.log('del  - Delete an employee');
-    console.log('exit - Exit the application');
-    console.log('------------------------------------');
-    console.log('');
+function init() {
+    // DISPLAY COMMAND MENU
+    console.log('The Employee Management Application')
+    console.log('-----------------------------------')
+    console.log('COMMAND MENU')
+    console.log('show - Show all employees')
+    console.log('add - Add an employee')
+    console.log('del - Delete an employee')
+    console.log('exit - Exit the application')
+    console.log('-----------------------------------')
+    console.log('')
     // START WITH AN EMPTY ARRAY
-    let arrEmployees = [];
+    let arrEmployees = []
     // FETCH THE JSON DATA
     fetch('../data/employees.json')
         .then( response => response.json() )
         .then( data => {
             for (let employee of data.employees) {
-                arrEmployees.push(`${employee.name} (${employee.title})`);
+                arrEmployees.push(`${employee.name} (${employee.title})`)
             }
-            // KEEP USER AT SELECTING A COMMAND
-            while(true) {
+            // KEEP THE USER AT THE COMMAND MENU
+            do {
                 // ALLOW THE USER TO ENTER A COMMAND
-                let command = prompt('Enter command');
-                // CHECK TO MAKE SURE COMMAND IS NOT NULL (CANCEL)
+                let command = prompt('Enter command').toLowerCase()
+                // CHECK AND MAKE SURE COMMAND IS NOT NULL
                 if (command !== null) {
-                    command = command.toLowerCase();
                     if (command === 'show') {
-                        view(arrEmployees);
+                        view(arrEmployees)
                     } else if (command === 'add') {
-                        add(arrEmployees);
+                        add(arrEmployees)
                     } else if (command === 'del') {
-                        del(arrEmployees);
+                        del(arrEmployees)
                     } else if (command === 'exit') {
-                        break;
+                        break
                     } else {
-                        alert('That is not a valid command');
+                        alert('That is not a valid command.')
                     }
                 } else {
-                    alert('Please enter a command.');
+                    alert('Please enter a command.')
                 }
-            }
-            console.log('The program has been terminated.');
-        } )
-        .catch( error => console.log(error.message) );
+            } while (true)
+            console.log('The program has been terminated.')
+        })
+        .catch( error => console.log(error.message) )
 }
-main();
+init()
