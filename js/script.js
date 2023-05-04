@@ -1,78 +1,67 @@
-function view(arrEmployees) {
-    // COUNTER THAT APPEARS NEXT TO EMPLOYEES NAME (START AT 1)
-    let i = 1
-    // LOOP THROUGH EMPLOYEES ARRAY
-    for (let employee of arrEmployees) {
-        console.log(`${i}. ${employee}`)
-        i++ // INCREMENT COUNTER
+// HELPER FUNCTION TO GET DOM ELEMENTS
+const $ = (id) => document.getElementById(id)
+
+function calculateDays() {
+    // PRIVATE VARIABLES
+    let event
+    let dt
+    let year
+    let date
+    let today
+    let oneDay
+    let days
+
+    // SELECT VALUES FROM EVENT AND DATE TEXT BOXES
+    event = $('event').value
+    dt = $('date').value
+
+    // MAKE SURE THAT TEXT BOXES ARE NOT EMPTY
+    if (event.length === 0 || dt.length === 0) {
+        $('message').innerHTML = 'Enter an event and a date.'
+        return
     }
-    console.log('')
-}
-function add(arrEmployees) {
-    // COLLECT THE EMPLOYEE'S NAME AND TITLE
-    let name = prompt('Enter the employee\'s name')
-    let title = prompt('Enter the employee\'s title')
-    // PUSH NEW EMPLOYEE TO TEMP ARRAY
-    arrEmployees.push(`${name} (${title})`)
-    // DISPLAY SUCCESS MESSAGE
-    console.log(`${name} was successfully added.`)
-    console.log('')
-}
-function del(arrEmployees) {
-    // ASK USER WHICH EMPLOYEE THEY WANT TO DELETE
-    let num = parseInt(prompt('Enter employee number to delete'))
-    // CHECK AND MAKE SURE ENTRY IS A VALID NUMBER
-    if (num < 1 || num > arrEmployees.length) {
-        alert('Invalid employee number.')
-    } else {
-        let employee = arrEmployees.splice(num - 1, 1)
-        console.log(`${employee} was successfully deleted.`)
-        console.log('')
+
+    // MAKE SURE THAT DATE CONTAINS "/"
+    if (dt.indexOf('/') === -1) {
+        $('message').innerHTML = 'SLASH: Please check the date format. (Ex: XX/XX/XXXX)'
+        return
+    }
+
+    // GET YEAR FROM EVENT DATE STRING AND VERIFY THAT IT IS 4 DIGIT/NUMERIC
+    year = dt.substring(dt.length - 4)
+    if (isNaN(year)) {
+        $('message').innerHTML = 'YEAR: Please check the date format. (Ex: XX/XX/XXXX)'
+        return
+    }
+
+    // CONVERT THE EVENT DATE STRING TO DATE OBJECT AND MAKE SURE IT'S A VALID DATE
+    date = new Date(dt)
+    if (date.toString() === 'Invalid Date') {
+        $('message').innerHTML = 'DATE: Please check the date format. (Ex: XX/XX/XXXX)'
+        return
+    }
+
+    // CALCULATE DAYS
+    today = new Date() // RIGHT NOW
+
+    // HOURS * MINUTES * SECONDS * MILLISECONDS = ONE DAY
+    oneDay = 24 * 60 * 60 * 1000
+
+    // USER'S DATE - TODAY'S DATE / ONE DAY = NUMBER OF DAYS
+    days = (date.getTime() - today.getTime()) / oneDay
+
+    // ROUND NUMBER OF DAYS UP
+    days = Math.ceil(days)
+
+    // CREATE AND DISPLAY THE MESSAGE
+    if (days === 0) {
+        $('message').innerHTML = `Today is ${event.toUpperCase()}<br>${date.toDateString()}`
+    } else if (days < 0) {
+        $('message').innerHTML = `${event.toUpperCase()} happened ${Math.abs(days)} day(s) ago.<br>${date.toDateString()}`
+    } else if (days > 0) {
+        $('message').innerHTML = `${Math.abs(days)} day(s) until ${event.toUpperCase()}<br>${date.toDateString()}`
     }
 }
-function init() {
-    // DISPLAY COMMAND MENU
-    console.log('The Employee Management Application')
-    console.log('-----------------------------------')
-    console.log('COMMAND MENU')
-    console.log('show - Show all employees')
-    console.log('add - Add an employee')
-    console.log('del - Delete an employee')
-    console.log('exit - Exit the application')
-    console.log('-----------------------------------')
-    console.log('')
-    // START WITH AN EMPTY ARRAY
-    let arrEmployees = []
-    // FETCH THE JSON DATA
-    fetch('../data/employees.json')
-        .then( response => response.json() )
-        .then( data => {
-            for (let employee of data.employees) {
-                arrEmployees.push(`${employee.name} (${employee.title})`)
-            }
-            // KEEP THE USER AT THE COMMAND MENU
-            do {
-                // ALLOW THE USER TO ENTER A COMMAND
-                let command = prompt('Enter command').toLowerCase()
-                // CHECK AND MAKE SURE COMMAND IS NOT NULL
-                if (command !== null) {
-                    if (command === 'show') {
-                        view(arrEmployees)
-                    } else if (command === 'add') {
-                        add(arrEmployees)
-                    } else if (command === 'del') {
-                        del(arrEmployees)
-                    } else if (command === 'exit') {
-                        break
-                    } else {
-                        alert('That is not a valid command.')
-                    }
-                } else {
-                    alert('Please enter a command.')
-                }
-            } while (true)
-            console.log('The program has been terminated.')
-        })
-        .catch( error => console.log(error.message) )
-}
-init()
+
+$('countdown').addEventListener('click', calculateDays)
+$('event').focus()
